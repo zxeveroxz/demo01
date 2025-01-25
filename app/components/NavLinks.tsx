@@ -1,3 +1,4 @@
+"use client";
 import Link from "next/link";
 import { FaFileInvoice, FaHome,  FaUser } from "react-icons/fa";
 
