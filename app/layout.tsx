@@ -4,7 +4,7 @@ import { roboto } from "./ui/fonts";
 const Rootlayout:FC<PropsWithChildren> = ({children}) => {
   return (
     <html>
-        <body className={`${roboto} antialiased  ` }>{children}</body> 
+        <body className={`${roboto.className} antialiased  ` }>{children}</body> 
     </html>
   );
 }

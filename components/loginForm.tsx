@@ -47,6 +47,7 @@ const LoginForm = () => {
                 <FormControl>
                   <Input
                     type="email" 
+                    className="text-sm w-full px-4 py-2 border border-solid border-gray-300 rounded"
                     placeholder="Correo" {...field} />
                 </FormControl>
 
@@ -64,6 +65,7 @@ const LoginForm = () => {
                 <FormControl>
                   <Input
                     type="password"
+                    className="text-sm w-full px-4 py-2 border border-solid border-gray-300 rounded"
                     placeholder="***" {...field} />
                 </FormControl>
 
