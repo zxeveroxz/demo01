@@ -1,15 +1,13 @@
 "use client"
+import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { loginSchema } from "@/lib/zop";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-
-
 import { Button } from "@/components/ui/button"
 import {
   Form,
-  FormControl,
-  
+  FormControl,  
   FormField,
   FormItem,
   FormLabel,
@@ -18,40 +16,80 @@ import {
 import { Input } from "@/components/ui/input"
 
 
+
 const LoginForm = () => {
+
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: "",
+      ruc: "",
+      usuario: "",
       password: "",
     },
   })
 
-  function onSubmit(values: z.infer<typeof loginSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values)
-  }
+  async function onSubmit(values: z.infer<typeof loginSchema>) {
+    
+    try {
+        const response = await fetch("https://movil.jsjfact.com/appi/login/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(values),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            console.log("Inicio de sesión exitoso:", data);
+            document.cookie = `token=${data.token}; path=/; secure; samesite=strict`;
+            router.push("/dash"); // Redirigir a /panel
+        } else {
+            console.error("Error en el login:", data.error);
+        }
+    } catch (error) {
+        console.error("Error de red:", error);
+    }
+}
 
   return (
+    
     <div >
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <FormField
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <FormField
+        
             control={form.control}
-            name="email"
+            name="ruc"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Correo</FormLabel>
-                <FormControl>
+                <FormLabel>RUC</FormLabel> <FormMessage className="inline" />
+                <FormControl >
                   <Input
-                    type="email" 
+                    type="number" 
                     className="text-sm w-full px-4 py-2 border border-solid border-gray-300 rounded"
-                    placeholder="Correo" {...field} />
+                    placeholder="Ingrese su RUC" {...field} />
                 </FormControl>
 
-                <FormMessage />
+                
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="usuario"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Usuario</FormLabel> <FormMessage className="inline" />
+                <FormControl>
+                  <Input
+                    type="text" 
+                    className="text-sm w-full px-4 py-2 border border-solid border-gray-300 rounded"
+                    placeholder="Ingrese su Usuario" {...field} />
+                </FormControl>          
               </FormItem>
             )}
           />
@@ -61,15 +99,13 @@ const LoginForm = () => {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Clave</FormLabel>
-                <FormControl>
+                <FormLabel>Clave</FormLabel> <FormMessage className="inline" />
+                <FormControl >
                   <Input
                     type="password"
                     className="text-sm w-full px-4 py-2 border border-solid border-gray-300 rounded"
                     placeholder="***" {...field} />
                 </FormControl>
-
-                <FormMessage />
               </FormItem>
             )}
           />
